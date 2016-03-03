@@ -1,5 +1,8 @@
 using UnityEngine;
 
+// Moving fingers together zooms out, moving apart zooms in. 
+// Thinking it's best to invert it.
+
 public class PinchZoom : MonoBehaviour
 {
     public float perspectiveZoomSpeed = 0.5f;        // The rate of change of the field of view in perspective mode.
