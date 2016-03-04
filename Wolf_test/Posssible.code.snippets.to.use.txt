@@ -1,0 +1,9 @@
+
+
+# Dismemberment
+
+http://docs.unity3d.com/ScriptReference/HingeJoint2D.html
+
+http://docs.unity3d.com/ScriptReference/Joint2D-breakForce.html
+
+problem  with hingejoint  - http://answers.unity3d.com/questions/723231/hingejoint2dgetreactionforce-not-working.html
