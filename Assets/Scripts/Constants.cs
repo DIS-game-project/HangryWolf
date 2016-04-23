@@ -13,7 +13,7 @@ namespace Assets.Scripts
         /// The collider of the bird is bigger when on idle state
         /// This will make it easier for the user to tap on it
         /// </summary>
-        public static readonly float BirdColliderRadiusNormal = 0.235f;
-        public static readonly float BirdColliderRadiusBig = 0.5f;
+        public static readonly float WolfColliderRadiusNormal = 0.235f;
+        public static readonly float WolfColliderRadiusBig = 0.5f;
     }
 }
