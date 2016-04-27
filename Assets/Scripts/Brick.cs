@@ -21,7 +21,7 @@ public class Brick : MonoBehaviour
         {
             
             Destroy(gameObject);
-            Instantiate(Remains, transform.position, transform.rotation);
+           Instantiate(Remains, transform.position, transform.rotation);
             //This will create a copy of the remains at the exact position of the brick. Afterwards, the object will be removed, giving the illusion that the new one is actually the old one, but "broken".
         }
     
