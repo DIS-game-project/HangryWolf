@@ -18,7 +18,7 @@ public class Pig : MonoBehaviour
         if (col.gameObject.GetComponent<Rigidbody2D>() == null) return;
 
         //if we are hit by a bird
-        if (col.gameObject.tag == "Bird")
+        if (col.gameObject.tag == "Wolf")
         {
             GetComponent<AudioSource>().Play();
             Destroy(gameObject);

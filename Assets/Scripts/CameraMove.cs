@@ -9,7 +9,8 @@ public class CameraMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (SlingShot.slingshotState == SlingshotState.Idle && GameManager.CurrentGameState == GameState.Playing)
+        //if (SlingShot.slingshotState == SlingshotState.Idle && GameManager.CurrentGameState == GameState.Playing)
+        if (Cannon.cannonState == CannonState.Idle && GameManager.CurrentGameState == GameState.Playing)
         {
             //drag start
             if (Input.GetMouseButtonDown(0))
@@ -27,8 +28,8 @@ public class CameraMove : MonoBehaviour
                 float deltaX = (previousPosition.x - input.x)  * dragSpeed;
                 float deltaY = (previousPosition.y - input.y) * dragSpeed;
                 //clamp the values so that we drag within limits
-                float newX = Mathf.Clamp(transform.position.x + deltaX, 0, 13.36336f);
-                float newY = Mathf.Clamp(transform.position.y + deltaY, 0, 2.715f);
+                float newX = Mathf.Clamp(transform.position.x + deltaX, 0, 35f);
+                float newY = Mathf.Clamp(transform.position.y + deltaY, 0, 6.715f);
                 //move camera
                 transform.position = new Vector3(
                     newX,
@@ -46,5 +47,5 @@ public class CameraMove : MonoBehaviour
     private float timeDragStarted;
     private Vector3 previousPosition = Vector3.zero;
 
-    public SlingShot SlingShot;
+    public Cannon Cannon;
 }

@@ -7,26 +7,27 @@ public class GameManager : MonoBehaviour
 {
 
     public CameraFollow cameraFollow;
-    int currentBirdIndex;
-    public SlingShot slingshot;
+    int currentWolfIndex;
+    public Cannon cannon;
     [HideInInspector]
     public static GameState CurrentGameState = GameState.Start;
     private List<GameObject> Bricks;
-    private List<GameObject> Birds;
+    private List<GameObject> Wolves;
     private List<GameObject> Pigs;
 
     // Use this for initialization
     void Start()
     {
         CurrentGameState = GameState.Start;
-        slingshot.enabled = false;
+        cannon.enabled = false;
         //find all relevant game objects
         Bricks = new List<GameObject>(GameObject.FindGameObjectsWithTag("Brick"));
-        Birds = new List<GameObject>(GameObject.FindGameObjectsWithTag("Bird"));
+        Wolves = new List<GameObject>(GameObject.FindGameObjectsWithTag("Wolf"));
         Pigs = new List<GameObject>(GameObject.FindGameObjectsWithTag("Pig"));
         //unsubscribe and resubscribe from the event
         //this ensures that we subscribe only once
-        slingshot.BirdThrown -= Slingshot_BirdThrown; slingshot.BirdThrown += Slingshot_BirdThrown;
+        cannon.WolfThrown -= Cannon_WolfThrown;
+        cannon.WolfThrown += Cannon_WolfThrown;
     }
 
 
@@ -37,13 +38,13 @@ public class GameManager : MonoBehaviour
         {
             case GameState.Start:
                 //if player taps, begin animating the bird 
-                //to the slingshot
+                //to the cannon
                 if (Input.GetMouseButtonUp(0))
                 {
-                    AnimateBirdToSlingshot();
+                    AnimateWolfToCannon();
                 }
                 break;
-            case GameState.BirdMovingToSlingshot:
+            case GameState.WolfMovingToCannon:
                 //do nothing
                 break;
             case GameState.Playing:
@@ -51,12 +52,12 @@ public class GameManager : MonoBehaviour
                 //and either everything has stopped moving
                 //or there has been 5 seconds since we threw the bird
                 //animate the camera to the start position
-                if (slingshot.slingshotState == SlingshotState.BirdFlying &&
-                    (BricksBirdsPigsStoppedMoving() || Time.time - slingshot.TimeSinceThrown > 5f))
+                if (cannon.cannonState == CannonState.WolfFlying &&
+                    (BricksWolvesPigsStoppedMoving() || Time.time - cannon.TimeSinceThrown > 5f))
                 {
-                    slingshot.enabled = false;
+                    cannon.enabled = false;
                     AnimateCameraToStartPosition();
-                    CurrentGameState = GameState.BirdMovingToSlingshot;
+                    CurrentGameState = GameState.WolfMovingToCannon;
                 }
                 break;
             //if we have won or lost, we will restart the level
@@ -106,40 +107,41 @@ public class GameManager : MonoBehaviour
                                 CurrentGameState = GameState.Won;
                             }
                             //animate the next bird, if available
-                            else if (currentBirdIndex == Birds.Count - 1)
+                            else if (currentWolfIndex == Wolves.Count - 1)
                             {
                                 //no more birds, go to finished
                                 CurrentGameState = GameState.Lost;
                             }
                             else
                             {
-                                slingshot.slingshotState = SlingshotState.Idle;
+                                cannon.cannonState = CannonState.Idle;
                                 //bird to throw is the next on the list
-                                currentBirdIndex++;
-                                AnimateBirdToSlingshot();
+                                currentWolfIndex++;
+                                AnimateWolfToCannon();
                             }
                         });
     }
 
     /// <summary>
-    /// Animates the bird from the waiting position to the slingshot
+    /// Animates the bird from the waiting position to the cannon
     /// </summary>
-    void AnimateBirdToSlingshot()
+    void AnimateWolfToCannon()
     {
-        CurrentGameState = GameState.BirdMovingToSlingshot;
-        Birds[currentBirdIndex].transform.positionTo
-            (Vector2.Distance(Birds[currentBirdIndex].transform.position / 10,
-            slingshot.BirdWaitPosition.transform.position) / 10, //duration
-            slingshot.BirdWaitPosition.transform.position). //final position
+        CurrentGameState = GameState.WolfMovingToCannon;
+        Wolves[currentWolfIndex].transform.positionTo
+            (Vector2.Distance(Wolves[currentWolfIndex].transform.position / 10,
+            cannon.WolfWaitPosition.transform.position) / 10, //duration
+            cannon.WolfWaitPosition.transform.position). //final position
                 setOnCompleteHandler((x) =>
                         {
                             x.complete();
                             x.destroy(); //destroy the animation
                             CurrentGameState = GameState.Playing;
-                            slingshot.enabled = true; //enable slingshot
-                            //current bird is the current in the list
-                            slingshot.BirdToThrow = Birds[currentBirdIndex];
+                            cannon.enabled = true; //enable cannon
+                            //current wolf is the current in the list
+                            cannon.WolfToThrow = Wolves[currentWolfIndex];
                         });
+
     }
 
     /// <summary>
@@ -147,9 +149,10 @@ public class GameManager : MonoBehaviour
     /// </summary>
     /// <param name="sender"></param>
     /// <param name="e"></param>
-    private void Slingshot_BirdThrown(object sender, System.EventArgs e)
+    private void Cannon_WolfThrown(object sender, System.EventArgs e)
     {
-        cameraFollow.BirdToFollow = Birds[currentBirdIndex].transform;
+        cameraFollow.WolfToFollow = Wolves[currentWolfIndex].transform;
+        //print("good");
         cameraFollow.IsFollowing = true;
     }
 
@@ -157,9 +160,9 @@ public class GameManager : MonoBehaviour
     /// Check if all birds, pigs and bricks have stopped moving
     /// </summary>
     /// <returns></returns>
-    bool BricksBirdsPigsStoppedMoving()
+    bool BricksWolvesPigsStoppedMoving()
     {
-        foreach (var item in Bricks.Union(Birds).Union(Pigs))
+        foreach (var item in Bricks.Union(Wolves).Union(Pigs))
         {
             if (item != null && item.GetComponent<Rigidbody2D>().velocity.sqrMagnitude > Constants.MinVelocity)
             {
