@@ -14,8 +14,3 @@ function OnMouseExit()
 {
     GetComponent(SpriteRenderer).sprite = Button;
 }
-
-function OnMouseDown()
-{
-    
-}
